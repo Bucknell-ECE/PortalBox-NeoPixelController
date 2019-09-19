@@ -185,6 +185,38 @@ void process_command(char * command) {
 			strip.show();
 			delay(wait);
 		}
+	} else if(0 == strcmp("color", fragment)) {
+		// the color command requires three values: red, green, and blue. Red,
+		// green and blue are unsigned chars.
+		fragment = strtok(NULL, " ");
+		int red = atoi(fragment);
+		if(0 > red || 255 < red) {
+			Serial.println(1); // respond that there was an error
+			return;
+		}
+
+		fragment = strtok(NULL, " ");
+		int green = atoi(fragment);
+		if(0 > green || 255 < green) {
+			Serial.println(1); // respond that there was an error
+			return;
+		}
+
+		fragment = strtok(NULL, " ");
+		int blue = atoi(fragment);
+		if(0 > blue || 255 < blue) {
+			Serial.println(1); // respond that there was an error
+			return;
+		}
+
+		uint32_t color = strip.Color(red, green, blue);
+
+		is_pulsing = false;
+		strip.setBrightness(DEFAULT_BRIGHTNESS);
+		for(int i=0; i<LED_COUNT; i++) {
+			strip.setPixelColor(i, color);
+		}
+		strip.show();
 	} else if(0 == strcmp("pulse", fragment)) {
 		// pulsing is indefinate... set a flag and do in loop 
 		is_pulsing = true;
