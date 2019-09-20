@@ -81,6 +81,9 @@ bool pulse_rising = false;
  * Parse a command and carry it out.
  */
 void process_command(char * command) {
+	int errno = 0;
+	digitalWrite(LED_BUILTIN, LOW);
+
 	// get command part of buffer and determine if it is recognized
 	char * fragment = strtok(command, " ");
 	if(0 == strcmp("blink", fragment)) {
@@ -221,11 +224,11 @@ void process_command(char * command) {
 		// pulsing is indefinate... set a flag and do in loop 
 		is_pulsing = true;
 	} else {
-		Serial.println(1); // respond that there was an error
-		return;
+		errno = 1;
 	}
 
-	Serial.println(0); // respond that there was not an error
+	digitalWrite(LED_BUILTIN, HIGH);
+	Serial.println(errno);
 }
 
 /**
@@ -256,6 +259,9 @@ void setup(void) {
 		strip.setPixelColor(i, 0);
 	}
 	strip.show();
+
+	pinMode(LED_BUILTIN, OUTPUT);
+	digitalWrite(LED_BUILTIN, HIGH);
 
 	// Initialize serial connection
 	while(!Serial) {
